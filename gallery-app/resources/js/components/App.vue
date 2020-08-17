@@ -1,6 +1,8 @@
 <template>
   <div>
-    <Home></Home>
+    <!-- <Home></Home> -->
+    <!-- <Gallery></Gallery> -->
+    <ShowImage></ShowImage>
   </div>
 </template>
 

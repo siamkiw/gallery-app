@@ -3,7 +3,7 @@
     <div class="card-header">Disk Usage Compositions</div>
     <div class="card-body">
       <div class="container">
-        <p1>No Data</p1>
+        <p>No Data</p>
       </div>
     </div>
   </div>
