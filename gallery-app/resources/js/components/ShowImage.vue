@@ -1,70 +1,80 @@
 <template>
-  <div>
-    <img :src="picture" />
+  <div id="app">
+    <vue-dropzone
+      id="imgDropzone"
+      ref="imgDropzone"
+      :options="dropzoneOptions"
+      @vdropzone-complete="afterComplete"
+    ></vue-dropzone>
 
-    <img class="preview" :src="picture" />
-    <br />
-    <button @click="onDowload">Dowload</button>
-    <button @click="onDowload">Dowload</button>
+    <div v-if="images.length >0">
+      <div class="row">
+        <div class="d-flex col-3">
+          <div v-for="image in images" :key="image.src">
+            <img :src="image.src" />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import firebase from "firebase";
-
+import vue2Dropzone from "vue2-dropzone";
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
+let uuid = require("uuid");
 export default {
-  name: "Upload",
+  name: "App",
+  components: {
+    vueDropzone: vue2Dropzone,
+  },
   data() {
     return {
-      imageData: null,
-      picture: null,
-      uploadValue: 0,
+      images: [],
+      dropzoneOptions: {
+        url: "https://httpbin.org/post",
+        thumbnailWidth: 250,
+        thumbnailHeight: 250,
+        addRemoveLinks: false,
+        acceptedFiles: ".jpg, .jpeg, .png",
+      },
     };
   },
   methods: {
-    onDowload() {
-      // Create a reference with an initial file path and name
-      var storage = firebase.storage();
-      var pathReference = storage.ref("images/stars.jpg");
+    async afterComplete(file) {
+      try {
+        const imageName = uuid.v1();
+        var metaData = {
+          contentType: "image/png",
+        };
 
-      // Create a reference from a Google Cloud Storage URI
-      var gsReference = storage.refFromURL("gs://bucket/images/stars.jpg");
+        const storageRef = firebase.storage().ref();
+        const imageRef = storageRef.child(`images/${imageName}.png`);
 
-      // Create a reference from an HTTPS URL
-      // Note that in the URL, characters are URL escaped!
-      var httpsReference = storage.refFromURL(
-        "https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.jpg"
-      );
-      // Create a reference to the file we want to download
-      storageRef
-        .child("images/stars.jpg")
-        .getDownloadURL()
-        .then(function (url) {
-          // `url` is the download URL for 'images/stars.jpg'
+        await imageRef.put(file, metaData);
 
-          // This can be downloaded directly:
-          var xhr = new XMLHttpRequest();
-          xhr.responseType = "blob";
-          xhr.onload = function (event) {
-            var blob = xhr.response;
-          };
-          xhr.open("GET", url);
-          xhr.send();
+        const downloadUrl = await imageRef.getDownloadURL();
+        console.log(imageRef);
+        this.images.push({ src: downloadUrl });
 
-          // Or inserted into an <img> element:
-          var img = document.getElementById("myimg");
-          img.src = url;
-          console.log(url);
-        })
-        .catch(function (error) {
-          // Handle any errors
-        });
+        this.$refs.imgDropzone.removeFile(file);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
 </script>
 
-
-
 <style>
+.img-div {
+  display: flex;
+  margin: 25px;
+}
+
+img {
+  max-width: 250px;
+  margin: 15px;
+}
 </style>

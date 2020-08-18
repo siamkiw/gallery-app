@@ -9,12 +9,20 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import firebase from 'firebase'
+import VueRouter from 'vue-router';
+
 import DiskUsage from './components/DiskUsage.vue'
 import Home from './components/Home.vue'
 import DiskUsageCompositions from './components/DiskUsageCompositions.vue'
 import Gallery from './components/Gallery.vue'
 import ShowImage from './components/ShowImage.vue'
+import Routes from './router'
 
+Vue.use(VueRouter)
+
+const router = new VueRouter({
+    routes: Routes
+})
 
 /**
  * The following block of code may be used to automatically register your
@@ -59,4 +67,5 @@ Vue.component('App', require('./components/App.vue').default);
 
 const app = new Vue({
     el: '#app',
+    router: router
 });
