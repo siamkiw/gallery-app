@@ -7,12 +7,10 @@
       @vdropzone-complete="afterComplete"
     ></vue-dropzone>
 
-    <div v-if="images.length >0">
-      <div class="row">
-        <div class="d-flex col-3">
-          <div v-for="image in images" :key="image.src">
-            <img :src="image.src" />
-          </div>
+    <div class="row">
+      <div v-if="images.length >0">
+        <div class="col-3" v-for="image in images" :key="image.src">
+          <img :src="image.src" class="crop" />
         </div>
       </div>
     </div>
@@ -32,6 +30,10 @@ export default {
   data() {
     return {
       images: [],
+      contentType: "",
+      imageName: "",
+      size: 0,
+      fullPath: "",
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 250,
@@ -55,13 +57,29 @@ export default {
         await imageRef.put(file, metaData);
 
         const downloadUrl = await imageRef.getDownloadURL();
-        console.log(imageRef);
+        const metadata = await imageRef.getMetadata();
+        // console.log(metadata);
+
         this.images.push({ src: downloadUrl });
+        this.store(metadata);
 
         this.$refs.imgDropzone.removeFile(file);
       } catch (error) {
         console.log(error);
       }
+    },
+    store(data) {
+      axios
+        .post("/p", {
+          contentType: data.contentType,
+          imageName: data.name,
+          size: data.size,
+          fullPath: data.fullPath,
+        })
+        .then((res) => {
+          let resData = JSON.parse(res.config.data);
+          console.log(resData, "form axios");
+        });
     },
   },
 };
@@ -76,5 +94,11 @@ export default {
 img {
   max-width: 250px;
   margin: 15px;
+}
+
+.crop {
+  object-fit: cover;
+  width: 250px;
+  height: 250px;
 }
 </style>

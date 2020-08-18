@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
@@ -12,23 +13,34 @@ class PostsController extends Controller
     //     $this->middleware('auth');
     // }
 
-    public function store(Request $request)
+    public function store()
     {
-        dd($request->config->data);
-        // $data = request()->validate([
-        //     'data' => ['require'],
-        // ]);
 
+        info('This is some useful information.');
+        // dd(json_encode($request));
+        // dd('hello');
+        // // $data = request()->validate([
+        // //     'data' => ['require'],
+        // // ]);
+
+        $data = request()->validate([
+            'imageName' => 'required',
+            'contentType' => 'required',
+            'size' => 'required',
+            'fullPath' => 'required',
+        ]);
+
+        return redirect('/');
         // $imagePath = request('data')->store('uploads', 'public');
 
         // auht()->user()->post()->create([
         //     'image' => $imagePath,
         // ]);
 
-        // auht()->user()->post()->create($request->config->data);
+        // auht()->user()->post()->create($request->config->$data);
 
         // dd($imagePath);
-        return $request;
+        // return $request;
 
     }
 }

@@ -48709,8 +48709,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
 
 
 
@@ -48725,6 +48723,10 @@ var uuid = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser
   data: function data() {
     return {
       images: [],
+      contentType: "",
+      imageName: "",
+      size: 0,
+      fullPath: "",
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 250,
@@ -48739,7 +48741,7 @@ var uuid = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var imageName, metaData, storageRef, imageRef, downloadUrl;
+        var imageName, metaData, storageRef, imageRef, downloadUrl, metadata;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -48760,29 +48762,47 @@ var uuid = __webpack_require__(/*! uuid */ "./node_modules/uuid/dist/esm-browser
 
               case 9:
                 downloadUrl = _context.sent;
-                console.log(imageRef);
+                _context.next = 12;
+                return imageRef.getMetadata();
 
+              case 12:
+                metadata = _context.sent;
+
+                // console.log(metadata);
                 _this.images.push({
                   src: downloadUrl
                 });
 
+                _this.store(metadata);
+
                 _this.$refs.imgDropzone.removeFile(file);
 
-                _context.next = 18;
+                _context.next = 21;
                 break;
 
-              case 15:
-                _context.prev = 15;
+              case 18:
+                _context.prev = 18;
                 _context.t0 = _context["catch"](0);
                 console.log(_context.t0);
 
-              case 18:
+              case 21:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 15]]);
+        }, _callee, null, [[0, 18]]);
       }))();
+    },
+    store: function store(data) {
+      axios.post("/p", {
+        contentType: data.contentType,
+        imageName: data.name,
+        size: data.size,
+        fullPath: data.fullPath
+      }).then(function (res) {
+        var resData = JSON.parse(res.config.data);
+        console.log(resData, "form axios");
+      });
     }
   }
 });
@@ -53259,7 +53279,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.img-div {\n  display: flex;\n  margin: 25px;\n}\nimg {\n  max-width: 250px;\n  margin: 15px;\n}\n", ""]);
+exports.push([module.i, "\n.img-div {\n  display: flex;\n  margin: 25px;\n}\nimg {\n  max-width: 250px;\n  margin: 15px;\n}\n.crop {\n  -o-object-fit: cover;\n     object-fit: cover;\n  width: 250px;\n  height: 250px;\n}\n", ""]);
 
 // exports
 
@@ -87538,22 +87558,19 @@ var render = function() {
         on: { "vdropzone-complete": _vm.afterComplete }
       }),
       _vm._v(" "),
-      _vm.images.length > 0
-        ? _c("div", [
-            _c("div", { staticClass: "row" }, [
-              _c(
-                "div",
-                { staticClass: "d-flex col-3" },
-                _vm._l(_vm.images, function(image) {
-                  return _c("div", { key: image.src }, [
-                    _c("img", { attrs: { src: image.src } })
-                  ])
-                }),
-                0
-              )
-            ])
-          ])
-        : _vm._e()
+      _c("div", { staticClass: "row" }, [
+        _vm.images.length > 0
+          ? _c(
+              "div",
+              _vm._l(_vm.images, function(image) {
+                return _c("div", { key: image.src, staticClass: "col-3" }, [
+                  _c("img", { staticClass: "crop", attrs: { src: image.src } })
+                ])
+              }),
+              0
+            )
+          : _vm._e()
+      ])
     ],
     1
   )
