@@ -11,6 +11,7 @@ window.Vue = require('vue');
 import firebase from 'firebase'
 import VueRouter from 'vue-router';
 
+import PopUp from './components/PopUp.vue'
 import DiskUsage from './components/DiskUsage.vue'
 import Home from './components/Home.vue'
 import DiskUsageCompositions from './components/DiskUsageCompositions.vue'
@@ -55,7 +56,8 @@ Vue.component('Home', Home);
 Vue.component('Gallery', Gallery);
 Vue.component('DiskUsageCompositions', DiskUsageCompositions);
 Vue.component('ShowImage', ShowImage);
-
+Vue.component('PopUp', PopUp);
+PopUp
 
 Vue.component('App', require('./components/App.vue').default);
 

@@ -7,10 +7,20 @@
       @vdropzone-complete="afterComplete"
     ></vue-dropzone>
 
-    <div class="row">
+    <div class="container">
       <div v-if="images.length >0">
-        <div class="col-3" v-for="image in images" :key="image.src">
-          <img :src="image.src" class="crop" />
+        <div class="row">
+          <div v-for="image in images" :key="image.src">
+            <div class="col-sm">
+              <img
+                :src="image.src"
+                class="crop"
+                data-toggle="modal"
+                data-target=".bd-example-modal-lg"
+              />
+              <PopUp :img-src="imgeSrc" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +44,7 @@ export default {
       imageName: "",
       size: 0,
       fullPath: "",
+      imgeSrc: null,
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 250,
@@ -58,9 +69,9 @@ export default {
 
         const downloadUrl = await imageRef.getDownloadURL();
         const metadata = await imageRef.getMetadata();
-        // console.log(metadata);
 
         this.images.push({ src: downloadUrl });
+        this.imgeSrc = { src: downloadUrl };
         this.store(metadata);
 
         this.$refs.imgDropzone.removeFile(file);
@@ -92,13 +103,26 @@ export default {
 }
 
 img {
-  max-width: 250px;
+  max-width: 300px;
   margin: 15px;
 }
 
 .crop {
   object-fit: cover;
-  width: 250px;
-  height: 250px;
+  width: 300px;
+  height: 300px;
+}
+
+.modal-image {
+  min-width: 775px;
+}
+
+* {
+  padding: 0;
+}
+
+.big-icon {
+  font-size: 175px;
+  margin: 15px;
 }
 </style>
